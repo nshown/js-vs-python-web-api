@@ -31,7 +31,7 @@ def json_from_sqlite():
     results = cursor.fetchall()
     result_dicts = [ {"spanish_color": result[0], "english_color": result[1]} for result in results]
 
-    #conn.close()
+    conn.close()
 
     return jsonify(result_dicts)
 

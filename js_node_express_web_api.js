@@ -5,16 +5,6 @@ const port = 3000;
 const dbName = 'sp_to_en_color.db';
 const dbTableName = 'spanish_to_english';
 
-let db = new sqlite3.Database(dbName, (err) => {
-    if (err) {
-    console.error(err.message);
-    res.send('An error occured when trying to connect to the database.');
-    return;
-    }
-    console.log('Connected to the in-memory SQlite database.');
-});
-
-
 app.get('/', function (req, res) {
    res.send('Hello, I am a JavaScript Node Express Web API server and I will serve you data!');
 });
@@ -31,7 +21,15 @@ app.get('/simple-json', function (req, res) {
 
 
  app.get('/sqlite-json', function (req, res) {
-
+    let db = new sqlite3.Database(dbName, (err) => {
+        if (err) {
+        console.error(err.message);
+        res.send('An error occured when trying to connect to the database.');
+        return;
+        }
+        console.log('Connected to the in-memory SQlite database.');
+    });
+    
     let sqlQuery = `SELECT SPANISH_COLOR, ENGLISH_COLOR from ${dbTableName}`;
     
     db.all(sqlQuery, [], (err, rows) => {
@@ -41,9 +39,9 @@ app.get('/simple-json', function (req, res) {
         english_to_spanish_objects = rows.map((row) => {
             return {"spanish_color": row.SPANISH_COLOR, "english_color": row.ENGLISH_COLOR};
         });
+        db.close();
         res.send(english_to_spanish_objects);
     });
-
     //db.close();
 });
 
